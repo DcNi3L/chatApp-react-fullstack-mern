@@ -1,5 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react';
-import { set, uniqBy } from 'lodash';
+import { uniqBy } from 'lodash';
 import axios from 'axios';
 import Picker from 'emoji-picker-react';
 import Modal from 'react-modal';
@@ -79,10 +79,10 @@ function Chat() {
       if (isMessageForSelectedUser) {
         setTimeout(() => {
           setMessages((prev) => [...prev, { ...messageData }]);
-        }, 100)
+        }, 500)
       }
     }
-  } 
+  }
 
   // sending message to server when enter is pressed
   function sendMessage(e, file = null) {
@@ -94,7 +94,7 @@ function Chat() {
         file,
       })
     );
-  
+
     if (file) {
       setTimeout(() => {
         axios.get('/messages/' + selectedUser).then((res) => {
@@ -113,9 +113,9 @@ function Chat() {
           },
         ]);
         setNewMessageText('');
-      }, 100);
+      }, 500);
     }
-  }  
+  }
 
   // file sending function
   function sendFile(e) {
@@ -135,18 +135,18 @@ function Chat() {
       setTimeout(async () => {
         const response = await axios.get(`/messages/${selectedUser}`);
         setMessages(response.data);
-      }, 100);
-      
+      }, 500);
+
       setTimeout(() => {
         axios.get('/messages/' + id).then((res) => {
           setMessages(res.data);
         });
-      }, 100);
+      }, 500);
     } catch (error) {
       console.error('Error deleting message:', error);
     }
   }
-  
+
   async function deleteAllMessages() {
     try {
       await axios.delete(`/messages/${id}/${selectedUser}`);
@@ -155,12 +155,12 @@ function Chat() {
         axios.get('/messages/' + id).then((res) => {
           setMessages(res.data);
         });
-      }, 100);
+      }, 500);
     } catch (error) {
       console.error('Error deleting all messages:', error);
     }
-  }   
-  
+  }
+
 
   function isImage(fileName) {
     const imageExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.bmp'];
@@ -198,9 +198,11 @@ function Chat() {
   // messages fetching from db
   useEffect(() => {
     if (selectedUser) {
-      axios.get('/messages/' + selectedUser).then((res) => {
-        setMessages(res.data);
-      });
+      setTimeout(() => {
+        axios.get('/messages/' + selectedUser).then((res) => {
+          setMessages(res.data);
+        });
+      }, 500)
     }
   }, [selectedUser, messages]);
 
@@ -219,7 +221,7 @@ function Chat() {
     }
   }, [messages]);
 
-
+  //emoji picker toggling by click
   const toggleEmojiPicker = () => {
     setShowPicker(!showPicker);
   };

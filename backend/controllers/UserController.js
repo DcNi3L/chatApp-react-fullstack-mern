@@ -60,8 +60,11 @@ const UserController = {
         const token = req.cookies?.token;
         if (token) {
             jwt.verify(token, jwtSecret, {}, (err, userData) => {
-                if (err) throw err;
-                res.json(userData);
+                if (err) {
+                    res.clearCookie('token').status(401).json('Invalid token');
+                } else {
+                    res.json(userData);
+                }
             });
         } else {
             res.status(401).json('no token');
